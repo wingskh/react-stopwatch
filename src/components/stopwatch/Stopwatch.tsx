@@ -1,77 +1,116 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./Stopwatch.css";
 
+interface StopwatchBtnTextInterface {
+  leftBtn: string;
+  rightBtn: string;
+}
+
+interface StopwatchBtnTextCollection {
+  start: string;
+  reset: string;
+  stop: string;
+  lap: string;
+}
+
 const Stopwatch: React.FC = () => {
-  const [time, setTime] = useState<number>(0);
-  const [isRunning, setIsRunning] = useState<boolean>(false);
-  const [laps, setLaps] = useState<number[]>([]);
+  const [isRunningState, setIsRunningState] = useState<boolean>(false);
+  const [elapsedTime, setElapsedTime] = useState<number>(0);
+  const [lapState, setLapState] = useState<JSX.Element[]>([]);
+  // const intervalRef = useRef<number | undefined>();
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const startRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, []);
+  const stopwatchBtnTextCollection: StopwatchBtnTextCollection = {
+    start: "Start",
+    reset: "Reset",
+    stop: "Stop",
+    lap: "Lap",
+  };
 
-  const startTimer = () => {
-    if (intervalRef.current) return;
-    startRef.current = Date.now();
-    setIsRunning(true);
+  const startStopwatch = () => {
+    setIsRunningState(true);
+    console.log("Start timer");
     intervalRef.current = setInterval(() => {
-      setTime((prevTime) => prevTime + Date.now() - startRef.current!);
-      startRef.current = Date.now();
+      setElapsedTime((prevElapsedTime) => prevElapsedTime + 10);
     }, 10);
   };
 
-  const stopTimer = () => {
+  const stopStopTimer = () => {
+    setIsRunningState(false);
     if (!intervalRef.current) return;
     clearInterval(intervalRef.current);
-    intervalRef.current = null;
-    setIsRunning(false);
-  };
-
-  const resetTimer = () => {
-    setTime(0);
-    setLaps([]);
-  };
-
-  const lapTimer = () => {
-    setLaps((prevLaps) => [...prevLaps, time]);
   };
 
   const formatTime = (time: number): string => {
     const date = new Date(time);
-    const minutes = date.getUTCMinutes().toString().padStart(2, "0");
-    const seconds = date.getUTCSeconds().toString().padStart(2, "0");
-    const milliseconds = Math.floor(date.getUTCMilliseconds() / 10)
+    // const minutes = date.getUTCMinutes().toString().padStart(2, "0");
+    // const seconds = date.getUTCSeconds().toString().padStart(2, "0");
+    // const milliseconds = Math.floor(date.getUTCMilliseconds() / 10)
+    //   .toString()
+    //   .padStart(2, "0");
+
+    const minutes = Math.floor(time / 60000)
       .toString()
       .padStart(2, "0");
+    const seconds = Math.floor((time % 60000) / 1000)
+      .toString()
+      .padStart(2, "0");
+    const milliseconds = Math.floor((time % 1000) / 10)
+      .toString()
+      .padStart(2, "0");
+
     return `${minutes}:${seconds}.${milliseconds}`;
   };
 
+  const lapStopwatch = () => {
+    if (!intervalRef.current) return;
+    setLapState((prevLaps) => [
+      ...prevLaps,
+      <span>
+        <div>{`Lap ${lapState.length + 1}`}</div>
+        <div>{formatTime(elapsedTime)}</div>
+      </span>,
+    ]);
+  };
+
+  const resetStopwatch = () => {
+    if (!intervalRef.current) return;
+    setElapsedTime(0);
+    setLapState([]);
+  };
+
+  useEffect(() => {
+    console.log("Component has re-rendered.");
+  });
+
   return (
     <div className="stopwatch-container">
-      <h1 className="stopwatch-heading">{formatTime(time)}</h1>
+      <h1 className="stopwatch-header">{formatTime(elapsedTime)}</h1>
       <div className="stopwatch-buttons">
-        {isRunning ? (
-          <button onClick={stopTimer}>Stop</button>
+        {isRunningState ? (
+          <>
+            <button onClick={lapStopwatch}>
+              {stopwatchBtnTextCollection.lap}
+            </button>
+            <button onClick={stopStopTimer}>
+              {stopwatchBtnTextCollection.stop}
+            </button>
+          </>
         ) : (
-          <button onClick={startTimer}>Start</button>
-        )}
-        {isRunning ? (
-          <button onClick={lapTimer}>Lap</button>
-        ) : (
-          <button onClick={resetTimer}>Reset</button>
+          <>
+            <button onClick={startStopwatch}>
+              {stopwatchBtnTextCollection.start}
+            </button>
+            <button onClick={resetStopwatch}>
+              {stopwatchBtnTextCollection.reset}
+            </button>
+          </>
         )}
       </div>
+
       <ul className="lap-list">
-        {laps.map((lap, index) => (
-          <li key={index}>
-            Lap {index + 1}: {formatTime(lap)}
-          </li>
+        {lapState.map((lap, index) => (
+          <li key={index}>{lap}</li>
         ))}
       </ul>
     </div>
