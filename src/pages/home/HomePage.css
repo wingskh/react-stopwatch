@@ -1,0 +1,101 @@
+.page-content {
+  width: 1230px;
+  margin-left: auto;
+  margin-right: auto;
+  min-height: 75vh;
+}
+.center {
+  margin: auto;
+}
+.login-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  padding: 40px;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,.5);
+  box-sizing: border-box;
+  box-shadow: 0 15px 25px rgba(0,0,0,.6); border-radius: 10px;
+}
+.login-box h2 {
+  margin: 0 0 30px;
+  padding: 0;
+  color: #fff;
+  text-align: center;
+}
+.login-box .user-box { 
+  position: relative;
+}
+.login-box .user-box input { width: 100%;
+  padding: 10px 0; 
+  font-size: 16px; 
+  color: #fff;
+  margin-bottom: 30px;
+  border: none;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  background: transparent;
+}
+.login-box .user-box label {
+  position: absolute;
+  top:0;
+  left: 0;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  pointer-events: none;
+  transition: .5s;
+}
+.login-box .user-box input:focus ~ label,
+.login-box .user-box input:valid ~ label {
+  top: -20px;
+  left: 0;
+  color: #03e9f4;
+  font-size: 14px;
+}
+.login-box form button {
+  position: relative;
+  display: inline-block;
+  padding: 10px 20px; 
+  color: white;
+  width: 100%;
+  border: 2px solid transparent;
+  outline: none;
+  border-radius: 1.5rem;
+  background-color: rgba(17, 97, 237, 0.65);
+  letter-spacing: 1px;
+}
+.login-box form button:hover {
+  background-color: rgba(17, 97, 237, 1);
+}
+.login-box form .error-msg {
+  color: red;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+    color: red;
+  }
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+    color: red;
+  }
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+    color: red;
+  }
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
+    color: red;
+  }
+}
+.error-input {
+  animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+}
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition: background-color 600000s 0s, color 600000s 0s;
+}
